@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    build: ./Nginx_Reverse_Proxy/.
+    image: secure-reverse-proxy:dev
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      testnetwork:
+        aliases:
+          - "reverse.proxy.localhost"
+    deploy:
+      restart_policy:
+        condition: on-failure
+  
+  website-server:
+    container_name: website
+    build: ./Website/.
+    image: secured-website:dev
+    ports:
+      - 80
+    networks:
+      - testnetwork
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  backend:
+    container_name: backend
+    build: ./ProtectedAPI/Backend/.
+    image: secured-backend:dev
+    ports:
+      - 80
+    networks:
+      - testnetwork
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+networks:
+  testnetwork:
+    driver: bridge
