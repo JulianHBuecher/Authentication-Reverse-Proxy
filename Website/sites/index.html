@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <button id="front">Call front-end API</button>
+        <button id="back">Call back-end API</button>
+        <button id="logout">Logout</button>
+    </div>
+
+    <div>
+        <pre id="out"></pre>
+    </div>
+
+    <img src="https://bff-k8s.ddns.net/bff/api/weatherforecast" />
+    <img src="https://bff-k8s.ddns.net/bff/auth/logout" />
+    <img src="https://bff-k8s.ddns.net/bff/auth/info" />
+
+    <script>
+        document.getElementById("front").addEventListener("click", callFrontEndApi);
+        document.getElementById("back").addEventListener("click", callBackEndApi);
+        document.getElementById("logout").addEventListener("click", logout);
+
+        function callFrontEndApi() {
+            var xhr = new XMLHttpRequest();
+            var xsrfToken = getCookieByName('XSRF-TOKEN');
+            console.log('This is the XSRF Token: ', xsrfToken);
+            xhr.open("GET",`https://bff-k8s.ddns.net/bff/auth/info`, true);
+            xhr.setRequestHeader("X-XSRF-TOKEN", xsrfToken);    
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    log(xhr.status, JSON.parse(xhr.responseText));
+                }
+                else {
+                    log("Error: " + xhr.status);
+                }
+            }
+
+            xhr.send();
+        }
+
+        function callBackEndApi() {
+            var xhr = new XMLHttpRequest();
+            var xsrfToken = getCookieByName('XSRF-TOKEN');
+            console.log('This is the XSRF Token: ', xsrfToken);
+            xhr.open("GET", `https://bff-k8s.ddns.net/bff/api/weatherforecast`, true);
+            xhr.setRequestHeader("X-XSRF-TOKEN", xsrfToken);    
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    log(xhr.status, JSON.parse(xhr.responseText));
+                }
+                else {
+                    log("Error: " + xhr.status);
+                }
+            }
+
+            xhr.send();
+        }
+
+        function logout() {
+            var xhr = new XMLHttpRequest();
+            var xsrfToken = getCookieByName('XSRF-TOKEN');
+            console.log('This is the XSRF Token: ', xsrfToken);
+            xhr.open("POST", `https://bff-k8s.ddns.net/bff/auth/logout`, true);
+            xhr.setRequestHeader("X-XSRF-TOKEN", xsrfToken);    
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    log(xhr.status, JSON.parse(xhr.responseText));
+                }
+                else {
+                    log("Error: " + xhr.status);
+                }
+            }
+
+            xhr.send();
+        }
+
+        function log() {
+            document.getElementById('out').innerText = '';
+
+            Array.prototype.forEach.call(arguments, function (msg) {
+                if (msg instanceof Error) {
+                    msg = "Error: " + msg.message;
+                }
+                else if (typeof msg !== 'string') {
+                    msg = JSON.stringify(msg, null, 2);
+                }
+                document.getElementById('out').innerHTML += msg + '\r\n';
+            });
+        }
+
+        function getCookie(){
+            var pairs = document.cookie.split("/; ?/");
+            var cookies = {};
+            for (var i=0; i<pairs.length; i++){
+              var pair = pairs[i].split("=");
+              cookies[(pair[0]+'').trim()] = unescape(pair.slice(1).join('='));
+            }
+            return cookies;
+        }
+
+        function getCookieByName(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+              var c = ca[i];
+              while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+              }
+            }
+            return "";
+        }
+
+    </script>
+
+</body>
+</html>
