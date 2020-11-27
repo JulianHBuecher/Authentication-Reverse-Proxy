@@ -44,7 +44,7 @@ namespace IdentityServer
                     ClientId = "interactive",
                     ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
                     
-                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
 
                     RedirectUris = { "https://localhost:44300/signin-oidc" },
                     FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
@@ -52,6 +52,38 @@ namespace IdentityServer
 
                     AllowOfflineAccess = true,
                     AllowedScopes = { "openid", "profile", "scope2" }
+                },
+
+                // m2m client credentials flow client
+                new Client
+                {
+                    ClientId = "vouch-proxy",
+                    ClientName = "Vouch Proxy for Authorization of Clients at NGINX",
+
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    ClientSecrets = { new Secret("b1612bd0-9bbf-4157-99e3-0e1a65bdad92".Sha256()) },
+
+                    RedirectUris = { "https://vouch.proxy.localhost/auth" },
+                    FrontChannelLogoutUri = "https://vouch.proxy.localhost/signout-oidc",
+                    PostLogoutRedirectUris = { "https://vouch.proxy.localhost/signout-callback-oidc" },
+
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+
+                    //AllowAccessTokensViaBrowser = true,
+
+                    AllowedCorsOrigins =
+                    {
+                        "https://vouch.proxy.localhost",
+                        "https://reverse.proxy.localhost",
+                        "http://localhost:80",
+                    },
+
+                    RequireClientSecret = true,
+                    RequirePkce = false,
+
+                    AllowedScopes = { "openid", "profile", "scope1" }
                 },
             };
     }

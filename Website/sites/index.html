@@ -14,7 +14,14 @@
 <body>
     <div class="center">
         <h1>Welcome to the Homepage!</h1>
-        <img src="../assets/home.jpg" width="500" height="550" />
+        <img src="assets/home.jpg" width="500" height="550" />
+        <br><br>
+        <form action="/secure">
+            <button type="submit">Go Secure!</button>
+        </form>
     </div>
+    <?php
+        echo 'Hello, Unauthenticated User!';
+    ?>
 </body>
 </html>

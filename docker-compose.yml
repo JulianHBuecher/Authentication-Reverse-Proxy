@@ -2,7 +2,9 @@ version: "3.8"
 services:
   reverse-proxy:
     container_name: reverse-proxy
-    build: ./Nginx_Reverse_Proxy/.
+    build:
+      context: ./Nginx_Reverse_Proxy
+      dockerfile: Dockerfile.Vouch
     image: secure-reverse-proxy:dev
     ports:
       - "80:80"
@@ -35,6 +37,47 @@ services:
       - 80
     networks:
       - testnetwork
+    deploy:
+      restart_policy:
+        condition: on-failure
+    
+  identityserver:
+    container_name: identityserver
+    build: ./ProtectedAPI/IdentityServer/.
+    image: identityserver:dev
+    ports:
+      - 80
+    networks:
+      - testnetwork
+    deploy:
+      restart_policy:
+        condition: on-failure
+  
+  # Support for IdentityServer4 and PKCE is coming
+  # https://github.com/vouch/vouch-proxy/pull/307
+  vouch:
+    container_name: vouch
+    image: voucher/vouch-proxy:latest
+    ports:
+      - "9090:9090"
+    environment:
+      # - VOUCH_PORT=80
+      - VOUCH_DOMAINS=reverse.proxy.localhost,vouch.proxy.localhost,vouch.proxy.localhost/auth
+      # - VOUCH_TESTING=true
+      - VOUCH_LOGLEVEL=debug
+      - OAUTH_PROVIDER=oidc
+      - OAUTH_CLIENT_ID=vouch-proxy
+      - OAUTH_CLIENT_SECRET=b1612bd0-9bbf-4157-99e3-0e1a65bdad92
+      - OAUTH_AUTH_URL=https://reverse.proxy.localhost/identityserver/connect/authorize
+      - OAUTH_TOKEN_URL=https://reverse.proxy.localhost/identityserver/connect/token
+      - OAUTH_USER_INFO_URL=https://reverse.proxy.localhost/identityserver/connect/userinfo
+      - OAUTH_END_SESSION_ENDPOINT=https://reverse.proxy.localhost/identityserver/connect/endsession
+      - OAUTH_SCOPES=openid,profile,scope1
+      - OAUTH_CALLBACK_URLS=https://vouch.proxy.localhost/auth
+    networks:
+      testnetwork:
+        aliases:
+          - "vouch.proxy.localhost"
     deploy:
       restart_policy:
         condition: on-failure
