@@ -71,17 +71,39 @@ namespace IdentityServer
                     RefreshTokenUsage = TokenUsage.OneTimeOnly,
                     RefreshTokenExpiration = TokenExpiration.Sliding,
 
-                    //AllowAccessTokensViaBrowser = true,
-
                     AllowedCorsOrigins =
                     {
                         "https://vouch.proxy.localhost",
-                        "https://reverse.proxy.localhost",
-                        "http://localhost:80",
+                        "https://reverse.proxy.localhost"
                     },
 
                     RequireClientSecret = true,
                     RequirePkce = false,
+
+                    AllowedScopes = { "openid", "profile", "scope1" }
+                },
+
+                // m2m client credentials flow client
+                new Client
+                {
+                    ClientId = "openresty-proxy",
+                    ClientName = "OpenResty NGINX Proxy for Authorization of Clients at NGINX",
+
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    ClientSecrets = { new Secret("438c3e42-5f87-4fad-83a5-a30130943521".Sha256()) },
+
+                    RedirectUris = { "https://reverse.proxy.localhost/secure/callback" },
+                    FrontChannelLogoutUri = "https://reverse.proxy.localhost/signout-oidc",
+                    PostLogoutRedirectUris = { "https://reverse.proxy.localhost/" },
+
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+
+                    AllowedCorsOrigins =
+                    {
+                        "https://reverse.proxy.localhost"
+                    },
 
                     AllowedScopes = { "openid", "profile", "scope1" }
                 },
