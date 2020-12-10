@@ -4,10 +4,13 @@
 - [Infrastructure](#infrastructure)
 - [Target](#target)
 - [Possibilities](#possibilities)
-    - [Basic Authentication](#basic-authentication)
-    - [External Authentication Provider](#external-authentication-provider)
-    - [JWT Authentication](#jwt-authentication)
-- [Conclusion](#conclusion)
+    - [Functions out of the Box](#out-of-the-box)
+        - [Basic Authentication](#basic-authentication)
+        - [External Authentication Provider](#external-authentication-provider)
+        - [JWT Authentication](#jwt-authentication)
+    - [External Providers](#external-providers)
+        - [Vouch Proxy](#vouch-proxy)
+        - [lua-resty-openidc](#lua-resty-openidc)
 
 ## Infrastructure
 The test environment for this project includes two differenct container services. One part is a NGINX Webserver with two static files as content for protection. Plus a NGINX Reverse Proxy with Authentication at Proxy Level to protected the services behind it. <br>
@@ -20,7 +23,9 @@ For tackling these tasks NGINX serves a range of standard functionalities. <br>
 Following the different authentication schemes to protect access to resources: <br><br>
 For references see the according [documentation](https://docs.nginx.com/nginx/admin-guide/security-controls/).
 
-### Basic Authentication
+### Out of the box
+
+#### Basic Authentication
 First of all the standard of all authentication, Basic Authentication. Via NGINX it is possible to restrict access to your website or some parts of it by implementing a username/password authentication. These credentials are taken from a file created and populated by a password creation tool, for example `apache2-utils` (Debian, Ubuntu) or `httpd-tools` (RHEL/CentOS/Oracle Linux). <br>
 
 To create a password file everything you have to do is to set this command...
@@ -79,7 +84,7 @@ location /protected {
 ```
 Now you have to login when you want access to your page. If the credentials do not match, you get a 401 (Authorization Required) error.
 
-### External Authentication Provider
+#### External Authentication Provider
 Another Option is so called "Authentication Based on Subrequest Result" or Authentication via external authentication provider.
 It's possible to authenticate each request to your website with an external server or service. To perform authentication, NGINX makes an HTTP subrequest to an external server where the subrequest is verified. If the subrequest returns a `2xx` status code, the access is allowd, if it returns `401` or `403`, the access is denied. <br><br>
 
@@ -110,7 +115,7 @@ location = /auth {
 }
 ```
 
-### JWT Authentication
+#### JWT Authentication
 Finally NGINX could handle authentication via JSON Web Tokens (JWT) or Opaque Tokens. The following illustration shows the flow for this specific authentication:
 <div style="vertical-align: top; text-align: center;width: 500px;margin-left: auto;margin-right: auto;margin-top: 10px;">
 <img src="https://www.nginx.com/wp-content/uploads/2019/05/OAuth-2.0-access-tokens_NGINX-validates.png" width=500 height=350 style="display: block;" alt="Secure Infrastructure with NGINX Reverse Proxy" />
@@ -224,7 +229,16 @@ We use the `proxy_cache_lock` directive to tell NGINX that if concurrent request
 
 With caching now enabled, a client presenting an access token suffers only the latency cost of making the token intropsection request once every 10 seconds.  
 
-## Conclusion
-To conclude this short summary, to stay at the state of the art, a good solution is the JWT Authentication at the reverse proxy itself. For this the client need direct access to the identity server to get itself an access token, but token validation at backend level is not needed any more. <br>
-The Basic Authentication Example is only necessary if you want to simply protect specific areas on a webpage without big effort. <br>
-The Authentication via External Authentication Provider is the superior method of the JWT Authentication. Both of them depend on the same flow and tackle specific use cases. 
+### External Providers
+Beside the build in functions for subrequests there are additional frameworks, which handle authentication at NGINX. The following two are open source projects and are used in the sample repository above.
+
+#### Vouch Proxy
+Vouch Proxy is a relativly new community driven project. It is implemented in Golang and is an additional service in your network. It takes unauthorized requests from NGINX validates them and send them to your identity provider. If the user authentication is successfull access to your protected resources will be granted. <br><br>
+
+For information about the project, see the [GitHub Repo](https://github.com/vouch/vouch-proxy).
+
+#### lua-resty-openidc
+lua-resty-openidc is like a extension to NGINX. It depends on the auth_request modul build in in NGINX and handles user authentication. To use this Lua module, you have to install it in your NGINX server first and configure your protected endpoint in your .conf-files. <br>
+An working example is placed in my repo in `OpenResty_Reverse_Proxy` folder. <br><br>
+
+For information about the project, see the [GitHub Repo](https://github.com/zmartzone/lua-resty-openidc).

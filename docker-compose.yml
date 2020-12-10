@@ -55,34 +55,34 @@ services:
   
   # Support for IdentityServer4 and PKCE is coming
   # https://github.com/vouch/vouch-proxy/pull/307
-  # vouch:
-  #   container_name: vouch
-  #   image: voucher/vouch-proxy:latest
-  #   ports:
-  #     - "9090:9090"
-  #   environment:
-  #     # - VOUCH_PORT=80
-  #     - VOUCH_DOMAINS=proxy.localhost
-  #     # - VOUCH_TESTING=true
-  #     # - VOUCH_ALLOWALLUSERS=true
-  #     # - VOUCH_COOKIE_DOMAIN=proxy.localhost
-  #     - VOUCH_LOGLEVEL=debug
-  #     - OAUTH_PROVIDER=oidc
-  #     - OAUTH_CLIENT_ID=vouch-proxy
-  #     - OAUTH_CLIENT_SECRET=b1612bd0-9bbf-4157-99e3-0e1a65bdad92
-  #     - OAUTH_AUTH_URL=https://reverse.proxy.localhost/identityserver/connect/authorize
-  #     - OAUTH_TOKEN_URL=https://reverse.proxy.localhost/identityserver/connect/token
-  #     - OAUTH_USER_INFO_URL=https://reverse.proxy.localhost/identityserver/connect/userinfo
-  #     - OAUTH_END_SESSION_ENDPOINT=https://reverse.proxy.localhost/identityserver/connect/endsession
-  #     - OAUTH_SCOPES=openid,profile,scope1
-  #     - OAUTH_CALLBACK_URLS=https://vouch.proxy.localhost/auth
-  #   networks:
-  #     testnetwork:
-  #       aliases:
-  #         - "vouch.proxy.localhost"
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
+  vouch:
+    container_name: vouch
+    image: voucher/vouch-proxy:latest
+    ports:
+      - "9090:9090"
+    environment:
+      # - VOUCH_PORT=80
+      - VOUCH_DOMAINS=proxy.localhost
+      # - VOUCH_TESTING=true
+      # - VOUCH_ALLOWALLUSERS=true
+      # - VOUCH_COOKIE_DOMAIN=proxy.localhost
+      - VOUCH_LOGLEVEL=debug
+      - OAUTH_PROVIDER=oidc
+      - OAUTH_CLIENT_ID=vouch-proxy
+      - OAUTH_CLIENT_SECRET=b1612bd0-9bbf-4157-99e3-0e1a65bdad92
+      - OAUTH_AUTH_URL=https://reverse.proxy.localhost/identityserver/connect/authorize
+      - OAUTH_TOKEN_URL=https://reverse.proxy.localhost/identityserver/connect/token
+      - OAUTH_USER_INFO_URL=https://reverse.proxy.localhost/identityserver/connect/userinfo
+      - OAUTH_END_SESSION_ENDPOINT=https://reverse.proxy.localhost/identityserver/connect/endsession
+      - OAUTH_SCOPES=openid,profile,scope1
+      - OAUTH_CALLBACK_URLS=https://vouch.proxy.localhost/auth
+    networks:
+      testnetwork:
+        aliases:
+          - "vouch.proxy.localhost"
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   openresty-nginx:
     container_name: openresty-nginx
