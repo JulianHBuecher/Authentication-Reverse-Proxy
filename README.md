@@ -11,6 +11,7 @@
     - [External Providers](#external-providers)
         - [Vouch Proxy](#vouch-proxy)
         - [lua-resty-openidc](#lua-resty-openidc)
+        - [OAuth2-Proxy](#oauth2-proxy)
 
 ## Infrastructure
 The test environment for this project includes two differenct container services. One part is a NGINX Webserver with two static files as content for protection. Plus a NGINX Reverse Proxy with Authentication at Proxy Level to protected the services behind it. <br>
@@ -230,7 +231,7 @@ We use the `proxy_cache_lock` directive to tell NGINX that if concurrent request
 With caching now enabled, a client presenting an access token suffers only the latency cost of making the token intropsection request once every 10 seconds.  
 
 ### External Providers
-Beside the build in functions for subrequests there are additional frameworks, which handle authentication at NGINX. The following two are open source projects and are used in the sample repository above.
+Beside the build in functions for subrequests there are additional frameworks, which handle authentication at NGINX. The following three are open source projects and are used in the sample repository above.
 
 #### Vouch Proxy
 Vouch Proxy is a relativly new community driven project. It is implemented in Golang and is an additional service in your network. It takes unauthorized requests from NGINX validates them and send them to your identity provider. If the user authentication is successfull access to your protected resources will be granted. <br><br>
@@ -242,3 +243,9 @@ lua-resty-openidc is like a extension to NGINX. It depends on the auth_request m
 An working example is placed in my repo in `OpenResty_Reverse_Proxy` folder. <br><br>
 
 For information about the project, see the [GitHub Repo](https://github.com/zmartzone/lua-resty-openidc).
+
+#### OAuth2-Proxy
+OAuth2-Proxy is like Vouch Proxy a community driven project. It is implemented in Golang and is similiar to Vouch Proxy an additional service in your network. A standalone variant is possible too. It takes unauthorized requests from NGINX validates them and send them to your identity provider. If the user authentication is successfull access to your protected resources will be granted. 
+<br><br>
+
+For information about the project, see the [GitHub Repo](https://github.com/oauth2-proxy/oauth2-proxy).

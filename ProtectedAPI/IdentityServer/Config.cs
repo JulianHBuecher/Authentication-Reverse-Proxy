@@ -107,6 +107,36 @@ namespace IdentityServer
 
                     AllowedScopes = { "openid", "profile", "scope1" }
                 },
+                
+                // m2m client credentials flow client
+                new Client
+                {
+                    ClientId = "oauth2-proxy",
+                    ClientName = "OAuth2-Proxy for Authorization of Clients at NGINX",
+
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    ClientSecrets = { new Secret("0edc6d7b-633c-42d6-9b60-fbb2f10c49dc".Sha256()) },
+
+                    RedirectUris = { "https://reverse.proxy.localhost/oauth2/callback" },
+                    FrontChannelLogoutUri = "https://reverse.proxy.localhost/signout-oidc",
+                    PostLogoutRedirectUris = { "https://reverse.proxy.localhost/" },
+
+                    RequireClientSecret = true,
+                    RequirePkce = false,
+
+                    AlwaysIncludeUserClaimsInIdToken = true,
+
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+
+                    AllowedCorsOrigins =
+                    {
+                        "https://reverse.proxy.localhost"
+                    },
+
+                    AllowedScopes = { "openid", "profile", "scope1" }
+                },
             };
     }
 }
